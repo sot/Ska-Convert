@@ -87,6 +87,11 @@ sub time2date {
 ###################################################################################
 # Date format:  1999:260:03:30:01.542
     my $time = shift;
+    # second argument can be used to define input time as unix time
+    my $is_unix_time = shift;
+    if (defined $is_unix_time){
+        return Chandra::Time->new($time, { format=> 'unix' })->date();
+    }
     return Chandra::Time->new($time)->date();
 }
 
@@ -97,6 +102,11 @@ sub date2time {
 # 956245305.5 = eng_decom (unix) time at VCDU = 4324480 around 2000:111:15:41:46 (2000-04-20T15:42:50)
 # CXC Time from CCDM file is 72632569.96
     my $date = shift;
+    # second argument can be used to request return time as unix seconds
+    my $want_unix_secs = shift;
+    if (defined $want_unix_secs){
+        return Chandra::Time->new($date)->unix();
+    }
     return Chandra::Time->new($date)->secs();
 }
 
