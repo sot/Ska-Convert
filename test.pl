@@ -28,3 +28,16 @@ print $ok ? "ok" : "not ok", " ", $test++, "\n";
 print "$test:  time2date\n";
 $ok = (time2date(12345678.9) eq '1998:143:21:20:15.716');
 print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  time2date unix mode\n";
+$ok = (time2date(895958415, 'unix') eq '1998:143:21:20:15.000');
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time\n";
+$ok = (abs(date2time('1998:143:21:20:15.716') - 12345678.900000000) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time unix mode\n";
+$ok = (abs(date2time('1998:143:21:20:15.716', 'unix') - 895958415.716) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
