@@ -41,3 +41,7 @@ print "$test:  date2time unix mode\n";
 $ok = (abs(date2time('1998:143:21:20:15.716', 'unix') - 895958415.716) < 1e-15);
 print $ok ? "ok" : "not ok", " ", $test++, "\n";
 
+print "$test:  date2time relative mode\n";
+$ok = (abs(date2time('000:00:00:15.000') - 15) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+

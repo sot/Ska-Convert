@@ -104,6 +104,13 @@ sub date2time {
     my $date = shift;
     # second argument can be used to request return time as unix seconds
     my $want_unix_secs = shift;
+    # if this is delta date from the DOT, just cheat and use a full
+    # date relative to year 2000 (unix time would be moot here)
+    if ($date =~ /^\d{3}:\d{2}\:\d{2}:\d{2}\.\d{3}$/){
+        my $year = '2000';
+        return (Chandra::Time->new("${year}:${date}")->secs()
+                - Chandra::Time->new("${year}:000:00:00:00.000")->secs());
+    }
     if (defined $want_unix_secs){
         return Chandra::Time->new($date)->unix();
     }
