@@ -28,3 +28,15 @@ print $ok ? "ok" : "not ok", " ", $test++, "\n";
 print "$test:  time2date\n";
 $ok = (time2date(12345678.9) eq '1998:143:21:20:15.716');
 print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time\n";
+$ok = (date2time("2015:351:09:49:16.927") eq 566733025.111);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time unix\n";
+$ok = (date2time("2015:351:09:49:16.927", 1) eq 1450345756.927);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time with relative time\n";
+$ok = (date2time("000:01:30:01.000") eq 5401);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
