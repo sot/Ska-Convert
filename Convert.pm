@@ -10,6 +10,29 @@ use Carp;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
+use Inline Python => q{
+
+from Chandra.Time import DateTime, date2secs, secs2date
+
+def _date2secs(datestr):
+    date = datestr.decode()
+    return float(date2secs(date))
+
+def _secs2date(secs):
+    return secs2date(float(secs))
+
+def unix2date(unix_secs):
+    return DateTime(float(unix_secs), format='unix').date
+
+def date2unix(datestr):
+    date = datestr.decode()
+    return float(DateTime(date).unix)
+
+
+};
+
+
+
 require Exporter;
 
 @ISA = qw(Exporter AutoLoader);
@@ -25,7 +48,7 @@ require Exporter;
 
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 
-$VERSION = '0.01';
+$VERSION = '4.2';
 
 1;
 
@@ -89,12 +112,12 @@ sub time2date {
 ###################################################################################
 # Date format:  1999:260:03:30:01.542
     my $time = shift;
-    my $t1998 = @_ ? 0.0 : 883612736.816; # 2nd argument implies Unix time not CXC time
-    my $floor_time = floor($time+$t1998);
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($floor_time);
-
-    return sprintf ("%04d:%03d:%02d:%02d:%06.3f",
-		    $year+1900, $yday+1, $hour, $min, $sec + ($time+$t1998-$floor_time));
+    # second argument can be used to define input time as unix time
+    my $is_unix_time = shift;
+    if (defined $is_unix_time){
+        return unix2date($time);
+    }
+    return _secs2date($time);
 }
 
 ##***************************************************************************
@@ -103,17 +126,18 @@ sub date2time {
 # Date format:  1999:260:03:30:01.542
 # 956245305.5 = eng_decom (unix) time at VCDU = 4324480 around 2000:111:15:41:46 (2000-04-20T15:42:50)
 # CXC Time from CCDM file is 72632569.96
-
     my $date = shift;
-    my $t1998 = @_ ? 0.0 : 956245305.5- 72632569.96 + 1.276; # 2nd argument implies Unix time not CXC time
-    my ($sec, $min, $hr, $doy, $yr) = reverse split ":", $date;
-
-    return ($doy*86400 + $hr*3600 + $min*60 + $sec) unless ($yr);
-
-    my ($mon, $day) = ydoy2md($yr, $doy);
-
-    $sec = 59 if ($sec > 59);
-    return timegm($sec,$min,$hr,$day,$mon-1,$yr) - $t1998;
+    # second argument can be used to request return time as unix seconds
+    my $want_unix_secs = shift;
+    # if this is delta date from the DOT, just return it in seconds
+    if ($date =~ /^\d{3}:\d{2}\:\d{2}:\d{2}\.\d{3}$/){
+        my ($sec, $min, $hr, $doy, $yr) = reverse split ":", $date;
+        return ($doy*86400 + $hr*3600 + $min*60 + $sec);
+    }
+    if (defined $want_unix_secs){
+        return date2unix($date);
+    }
+    return _date2secs($date);
 }
 
 ##**********************************************************************
