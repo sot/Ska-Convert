@@ -130,8 +130,8 @@ sub date2time {
     # second argument can be used to request return time as unix seconds
     my $want_unix_secs = shift;
     # if this is delta date from the DOT, just return it in seconds
-    if ($date =~ /^\d{3}:\d{2}\:\d{2}:\d{2}\.\d{3}$/){
-        my ($sec, $min, $hr, $doy, $yr) = reverse split ":", $date;
+    my ($sec, $min, $hr, $doy, $yr) = reverse split ":", $date;
+    if (not $yr){
         return ($doy*86400 + $hr*3600 + $min*60 + $sec);
     }
     if (defined $want_unix_secs){
