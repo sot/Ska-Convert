@@ -23,7 +23,7 @@ require Exporter;
 
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 
-$VERSION = '0.02';
+$VERSION = '4.3';
 
 1;
 
