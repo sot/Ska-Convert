@@ -45,3 +45,7 @@ print "$test:  date2time relative mode\n";
 $ok = (abs(date2time('000:00:00:15.000') - 15) < 1e-15);
 print $ok ? "ok" : "not ok", " ", $test++, "\n";
 
+print "$test:  date2time more recent\n";
+$ok = (abs(date2time('2017:010:23:35:30.000') - 600478599.184) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
