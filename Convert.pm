@@ -106,18 +106,10 @@ sub date2time {
     my $date = shift;
     # second argument can be used to request return time as unix seconds
     my $want_unix_secs = shift;
-    # if this is delta date from the DOT, just cheat and use a full
-    # date relative to year 2000 day 1 (unix time would be moot here)
-    my ($date_day, $date_rest);
-    if ($date =~ /^(\d{3}):(\d{2}\:\d{2}:\d{2}\.\d{3})$/){
-        $date_day = $1;
-        $date_rest = $2;
-        # Planning to subtract time from 2000:001 so add the day to doy 1
-        my $mock_doy = 1 + $date_day;
-        # Calculate the delta time in seconds from 2000:001
-        return (Chandra::Time->new("2000:${mock_doy}:${date_rest}")->secs()
-                - Chandra::Time->new("2000:001:00:00:00.000")->secs());
-    }
+    # if this is delta date from the DOT it will have no $yr
+    my ($sec, $min, $hr, $doy, $yr) = reverse split ":", $date;
+    return ($doy*86400 + $hr*3600 + $min*60 + $sec) if (not defined $yr);
+
     if (defined $want_unix_secs){
         return Chandra::Time->new($date)->unix();
     }
