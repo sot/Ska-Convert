@@ -92,7 +92,9 @@ sub time2date {
     if (defined $is_unix_time){
         return Chandra::Time->new($time, { format=> 'unix' })->date();
     }
-    return Chandra::Time->new($time)->date();
+    else{
+        return Chandra::Time->new($time)->date();
+    }
 }
 
 ##***************************************************************************
@@ -119,7 +121,9 @@ sub date2time {
     if (defined $want_unix_secs){
         return Chandra::Time->new($date)->unix();
     }
-    return Chandra::Time->new($date)->secs();
+    else{
+        return Chandra::Time->new($date)->secs();
+    }
 }
 
 ##**********************************************************************
