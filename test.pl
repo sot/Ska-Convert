@@ -25,6 +25,33 @@ print "$test:  dec2hms\n";
 $ok = ($rah eq '8:13:49.440' && $dms eq '+54:19:15.60');
 print $ok ? "ok" : "not ok", " ", $test++, "\n";
 
+# Time regression values confirmed with Chandra.Time 3.20.2 on ska3
 print "$test:  time2date\n";
 $ok = (time2date(12345678.9) eq '1998:143:21:20:15.716');
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  time2date unix mode\n";
+$ok = (time2date(895958415, 'unix') eq '1998:143:21:20:15.000');
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time\n";
+$ok = (abs(date2time('1998:143:21:20:15.716') - 12345678.900000000) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time unix mode\n";
+$ok = (abs(date2time('1998:143:21:20:15.716', 'unix') - 895958415.716) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time more recent\n";
+$ok = (abs(date2time('2017:010:23:35:30.000') - 600478599.184) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+# Following regression test values just confirmed manually
+# (Chandra.Time does not support these relative formats)
+print "$test:  date2time relative mode 15s\n";
+$ok = (abs(date2time('000:00:00:15.000') - 15) < 1e-15);
+print $ok ? "ok" : "not ok", " ", $test++, "\n";
+
+print "$test:  date2time relative mode almost 11 days\n";
+$ok = (abs(date2time('010:23:12:09.100') - 947529.1) < 1e-15);
 print $ok ? "ok" : "not ok", " ", $test++, "\n";
